@@ -1,0 +1,58 @@
+-- Made By Yuuki#0299
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Chest = game:GetService("Workspace").BoatStages.NormalStages.TheEnd.GoldenChest.Trigger
+local Ready = false
+local Speed = 30 -- Auto Farm Velocidade
+
+local IsAlive = function(Entity)
+    if Entity and Entity.Character and Entity.Character:FindFirstChild("Humanoid") ~= nil and Entity.Character:FindFirstChild("Head") ~= nil and Entity.Character:FindFirstChild("HumanoidRootPart") ~= nil and Entity.Character.Humanoid.Health > 0 then
+        return true
+    end
+    return false
+end
+
+local TweenTo = function(Speed, Pos, Noclip)
+    if IsAlive(Player) then
+        if Noclip then
+            Player.Character.Humanoid:ChangeState(11)
+        end
+        Player.Character.Humanoid.WalkSpeed = Speed
+        Player.Character.Humanoid:MoveTo(Pos)
+    end
+end
+
+if IsAlive(Player) then
+    Player.Character.HumanoidRootPart.CFrame = CFrame.new(-50, -10, -442)
+    Player.Character.HumanoidRootPart.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0, 60, 0)
+    wait(0.5)
+    Ready = true
+    Player.Character.Humanoid.Died:Connect(function()
+        Ready = true
+    end)
+end
+
+Player.CharacterAdded:Connect(function()
+    repeat
+        wait()
+    until IsAlive(Player)
+    Player.Character.HumanoidRootPart.CFrame = CFrame.new(-50, -10, -442)
+    Player.Character.HumanoidRootPart.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0, 60, 0)
+    wait(0.5)
+    Ready = true
+    Player.Character.Humanoid.Died:Connect(function()
+        Ready = true
+    end)
+end)
+
+spawn(function()
+    while task.wait() do
+        if IsAlive(Player) then
+            if (Chest.Position - Player.Character.HumanoidRootPart.Position).magnitude < 500 then
+                Player.Character.HumanoidRootPart.CFrame = Chest.CFrame
+            else
+                TweenTo(Speed * 10, Chest.Position, true)
+            end
+        end
+    end
+end)
